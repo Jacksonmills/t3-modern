@@ -10,5 +10,8 @@ dotenv.config();
 
 export default {
   schema: "./src/db/schema.ts",
-  connectionString: process.env.DATABASE_URL,
+  driver: "mysql2",
+  dbCredentials: {
+    connectionString: process.env.DATABASE_URL as string,
+  },
 } satisfies Config;
