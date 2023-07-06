@@ -1,12 +1,6 @@
 import { db } from "@/db";
 import { post, randomNumber } from "@/db/schema";
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  currentUser,
-  useAuth,
-} from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, currentUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import AddPostForm from "./_components/AddPostForm";
