@@ -25,9 +25,10 @@ export const user = mysqlTable(
   "users",
   {
     id: serial("id").primaryKey(),
+    clerkId: varchar("clerk_id", { length: 256 }),
   },
   (user) => ({
-    userIndex: uniqueIndex("user_index").on(user.id),
+    clerkIndex: uniqueIndex("clerk_idx").on(user.clerkId),
   })
 );
 

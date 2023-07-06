@@ -1,10 +1,37 @@
 import { db } from "@/db";
 import { post, randomNumber } from "@/db/schema";
-import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  currentUser,
+  useAuth,
+} from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import AddPostForm from "./_components/AddPostForm";
-import { addRandomNumber } from "./actions";
+import { addRandomNumber, createUser } from "./actions";
+
+async function MyPosts() {
+  const user = await currentUser();
+
+  const posts = user?.id
+    ? await db.query.post.findMany({
+        where: (p) => eq(p.user_id, user.id),
+      })
+    : [];
+
+  return (
+    <div className="flex flex-col gap-2 text-center">
+      <div className="pb-4 text-2xl">Here are your posts:</div>
+      {posts.map((p) => (
+        <div key={p.id} className="flex justify-between">
+          <span>{p.content}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 async function Posts() {
   const data = await db.query.post.findMany({
@@ -100,6 +127,18 @@ function CreateNewNumberForm() {
 }
 
 export default async function Home() {
+  const user = await currentUser();
+
+  const users = user?.id
+    ? await db.query.user.findMany({
+        where: (u) => eq(u.clerkId, user.id),
+      })
+    : [];
+
+  if (user && !users[0]) {
+    await createUser(user.id);
+  }
+
   return (
     <div className="flex flex-col items-center gap-8 p-8">
       <SignedOut>
@@ -107,6 +146,7 @@ export default async function Home() {
       </SignedOut>
       <SignedIn>
         <AddPostForm />
+        <MyPosts />
         <Posts />
         <CreateNewNumberForm />
         <RandomNumbers />
