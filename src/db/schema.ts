@@ -19,3 +19,24 @@ export const randomNumber = mysqlTable(
     numberIndex: uniqueIndex("number_idx").on(randomNumber.number),
   })
 );
+
+// users
+export const user = mysqlTable(
+  "users",
+  {
+    id: serial("id").primaryKey(),
+  },
+  (user) => ({
+    userIndex: uniqueIndex("user_index").on(user.id),
+  })
+);
+
+// posts
+export const post = mysqlTable(
+  "posts",
+  {
+    id: serial("id").primaryKey(),
+    user_id: varchar("user_id", { length: 256 }),
+    content: varchar("content", { length: 256 }),
+  }
+);
